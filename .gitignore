@@ -1,5 +1,13 @@
+# build
 bin/
 obj/
 out/
+publish/
+artifacts/
+runs/
 *.user
 .vs/
+.vscode/
+TestResults/
+# PoCs e builds locais de spikes
+spikes/

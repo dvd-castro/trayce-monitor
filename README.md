@@ -13,7 +13,7 @@ One ring in the tray. Hover for the live card. Click for the panel.
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Platform: Windows 11](https://img.shields.io/badge/platform-Windows%2011-0078D4)
 ![.NET 10](https://img.shields.io/badge/.NET-10-512BD4)
-![Status: pre-alpha](https://img.shields.io/badge/status-pre--alpha-orange)
+![Status: early build](https://img.shields.io/badge/status-early%20build-orange)
 
 English | [Português (Brasil)](README.pt-BR.md)
 
@@ -22,8 +22,8 @@ English | [Português (Brasil)](README.pt-BR.md)
 </div>
 
 > [!WARNING]
-> **Trayce Monitor is pre-alpha and there is nothing to download yet.**
-> What exists today: an approved UI design (every screen on this page is a *design preview*, not a screenshot of a running app), a written architecture proposal, and a throwaway proof of concept (PoC) whose measurements are quoted below. The application itself has not been built. Everything under "Features" describes what v1 is designed to do.
+> **Trayce Monitor is an early build and there is nothing to download yet.**
+> What exists today: an approved UI design (every screen on this page is a *design preview*, not a screenshot of the app), a written architecture proposal, a throwaway proof of concept (PoC) whose measurements are quoted below, and an early build of v1 that you can [build from source](#%EF%B8%8F-build-from-source): ring icon, hover card, panel, tray menu and optional latency. Some items under "Features" are not in it yet, and there is no installer or release.
 
 ## Contents
 
@@ -228,7 +228,7 @@ Trayce Monitor never tells you to disable your firewall or antivirus, not even w
 | Design | UI design v2.2 (icon, card, panel, settings, first run, latency) | Done, approved |
 | Proof of concept | Tray icon, hover card, sensors and ICMP measured on one machine | Done, throwaway |
 | Architecture | Two-process design, sampling budget, packaging | Proposed |
-| **v1** | Everything in [Features](#-features-planned-for-v1), per-user installer and portable build, GitHub Releases, CI | Not started |
+| **v1** | Everything in [Features](#-features-planned-for-v1), per-user installer and portable build, GitHub Releases, CI | Early build (no release yet) |
 | After v1 | CPU temperature through an **optional** driver, with an explicit administrator step in the installer | Idea, design kept on file |
 | After v1 | winget package | Idea |
 | After v1 | Signed releases | Open decision |
@@ -236,11 +236,21 @@ Trayce Monitor never tells you to disable your firewall or antivirus, not even w
 
 ## 🛠️ Build from source
 
-**Coming soon.** There is no application source in this repository yet, so there is nothing to build. When it exists, the plan is:
+You need Windows 11 and the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0). Nothing else.
 
-- Windows 11 and the .NET 10 SDK, nothing else to install.
-- One script that builds locally and in CI (the release build in CI uses NativeAOT).
-- Automated tests plus a memory and CPU gate that must pass before a release.
+```powershell
+git clone https://github.com/dvd-castro/trayce-monitor.git
+cd trayce-monitor
+dotnet build TrayceMonitor.slnx -warnaserror      # app + unit tests
+dotnet test TrayceMonitor.slnx                    # core unit tests
+dotnet publish src/TrayceMonitor -c Release -o out/publish   # self-contained, ReadyToRun + trimmed
+.\out\publish\TrayceMonitor.exe
+```
+
+- `TrayceMonitor.exe --selftest` opens the card and the panel without touching the mouse, writes the result to `%LOCALAPPDATA%\TrayceMonitor\trayce.log` and exits (exit code 0 = passed).
+- `TrayceMonitor.exe --quit` closes the running instance.
+- NativeAOT is available with `-p:TrayceAot=true`, but it needs the MSVC linker (Visual Studio Build Tools with the C++ workload).
+- Settings live in `%LOCALAPPDATA%\TrayceMonitor\settings.json`.
 
 ## ❓ FAQ
 
@@ -288,7 +298,7 @@ The design was written in Brazilian Portuguese first. Localisation has not been 
 
 ## 🤝 Contributing
 
-The repository lives at [github.com/dvd-castro/trayce-monitor](https://github.com/dvd-castro/trayce-monitor). There is no application code yet, so no pull-request flow is open yet; contribution guidelines will be added when there is something to build. The ground rules will be the project's priorities: **light first** (a feature that costs memory or CPU in the always-on process needs a measurement), **no administrator rights**, **accessible by default**, and **honest status** in the docs. Commits follow [Conventional Commits](https://www.conventionalcommits.org/).
+The repository lives at [github.com/dvd-castro/trayce-monitor](https://github.com/dvd-castro/trayce-monitor). The app is an early build and no pull-request flow is open yet; contribution guidelines will be added before the first release. The ground rules will be the project's priorities: **light first** (a feature that costs memory or CPU in the always-on process needs a measurement), **no administrator rights**, **accessible by default**, and **honest status** in the docs. Commits follow [Conventional Commits](https://www.conventionalcommits.org/).
 
 ## 📄 License
 
