@@ -10,6 +10,7 @@
 **Um monitor de sistema levíssimo que mora na bandeja do Windows 11.**
 Um anel na bandeja. Passe o mouse para ver o cartão ao vivo. Clique para abrir o painel.
 
+[![CI](https://github.com/dvd-castro/trayce-monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/dvd-castro/trayce-monitor/actions/workflows/ci.yml)
 [![Licença: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Plataforma: Windows 11](https://img.shields.io/badge/platform-Windows%2011-0078D4)
 ![.NET 10](https://img.shields.io/badge/.NET-10-512BD4)
@@ -21,12 +22,12 @@ Um anel na bandeja. Passe o mouse para ver o cartão ao vivo. Clique para abrir 
 
 </div>
 
-> [!WARNING]
-> **O Trayce Monitor está em build inicial e ainda não há nada para baixar.**
-> O que existe hoje: um design de interface aprovado (cada tela desta página é uma *prévia de design*, não uma captura do aplicativo), uma proposta de arquitetura escrita, uma prova de conceito descartável (PoC) cujas medições estão citadas abaixo e um build inicial da v1 que você pode [compilar a partir do código](#%EF%B8%8F-compilar-a-partir-do-código): ícone em anel, cartão, painel, menu da bandeja e latência opcional. Alguns itens de "Recursos" ainda não estão nele, e não há instalador nem release.
+> [!NOTE]
+> **O Trayce Monitor está em build inicial.** Você pode [baixar pela aba Releases](#-download) (versões `0.x` são marcadas como pré-release) ou [compilar a partir do código](#%EF%B8%8F-compilar-a-partir-do-código). Cada tela desta página é uma *prévia de design*, não uma captura do aplicativo, e alguns itens de "Recursos" ainda não estão no aplicativo.
 
 ## Conteúdo
 
+[Download](#-download) ·
 [O que é](#-o-que-é) ·
 [Prévias](#%EF%B8%8F-prévias) ·
 [Recursos](#-recursos-planejados-para-a-v1) ·
@@ -38,6 +39,28 @@ Um anel na bandeja. Passe o mouse para ver o cartão ao vivo. Clique para abrir 
 [Perguntas frequentes](#-perguntas-frequentes) ·
 [Contribuir](#-contribuir) ·
 [Licença](#-licença)
+
+## 📥 Download
+
+Baixe a versão mais recente na **[página de Releases](https://github.com/dvd-castro/trayce-monitor/releases/latest)**. Requisitos: **Windows 11, 64 bits (x64)**. Não precisa de direitos de administrador nem de instalar o .NET separadamente.
+
+| Arquivo | O que é |
+|---|---|
+| `TrayceMonitor-<versão>-win-x64-setup.exe` | **Instalador, por usuário.** Instala em `%LOCALAPPDATA%\Programs\Trayce Monitor` sem direitos de administrador, cria um atalho no Menu Iniciar e um desinstalador (Configurações > Aplicativos). "Iniciar com o Windows" é oferecido e vem **desmarcado**. |
+| `TrayceMonitor-<versão>-win-x64-portable.zip` | **Portátil.** Extraia em qualquer pasta e execute `TrayceMonitor.exe`. Nada é instalado; para remover, apague a pasta. |
+| `SHA256SUMS.txt` | SHA-256 dos dois arquivos acima, para conferir o seu download. |
+
+### Aviso do Windows SmartScreen
+
+Os binários **ainda não são assinados** (assinatura de código), e arquivos novos de um editor que o Windows não conhece recebem um aviso de reputação. Ao executar o instalador ou o exe, você provavelmente verá **"O Windows protegeu o computador"**: clique em **Mais informações** e depois em **Executar assim mesmo**. Isso é esperado por enquanto, e por isso vale conferir o arquivo antes, ou [compilar a partir do código](#%EF%B8%8F-compilar-a-partir-do-código) se preferir.
+
+Para conferir um download, compare o SHA-256 dele com a linha daquele arquivo em `SHA256SUMS.txt`:
+
+```powershell
+Get-FileHash .\TrayceMonitor-<versão>-win-x64-setup.exe -Algorithm SHA256
+```
+
+O checksum só mostra que o arquivo não foi corrompido nem trocado depois que a release foi gerada; ele é publicado no mesmo lugar do arquivo, então não substitui uma assinatura. Releases assinadas são uma [decisão em aberto](#%EF%B8%8F-roteiro).
 
 ## 💡 O que é
 
@@ -154,7 +177,7 @@ O anel é desenhado como vetor liso, no tamanho exato que o Windows pede, e fica
 | **Acessível por desenho** | Nada é comunicado só por cor. Um texto de reserva dá nome ao ícone para leitores de tela e para o tooltip padrão. Caminho completo por teclado até o painel. |
 | **Sem administrador, sem driver** | Instala e roda por usuário. |
 | **Configurações** | Métrica do anel, paleta do ícone (automática, para barra escura, para barra clara, uma cor), °C ou °F, quais itens mostrar, intervalo de atualização (0,5, 1 ou 2 s), iniciar com o Windows, qual GPU monitorar, alertas. |
-| **Instalador por usuário e versão portátil** | Os dois planejados para cada release, com checagem de atualização opcional uma vez por dia. |
+| **Instalador por usuário e versão portátil** | Os dois publicados a cada release no [GitHub Releases](https://github.com/dvd-castro/trayce-monitor/releases/latest). A checagem de atualização opcional, uma vez por dia, ainda é planejada. |
 
 **Fora da v1, de propósito:** temperatura da CPU. Lê-la exige um driver de sensores em modo kernel e direitos de administrador, então ela está no [roteiro](#%EF%B8%8F-roteiro).
 
@@ -208,7 +231,7 @@ flowchart LR
 - **Processo da bandeja (Win32, C#):** o ícone de notificação, o cartão, o amostrador e as configurações. O cartão é Win32 puro com Direct2D e DirectWrite, sem XAML, para a memória ficar baixa. Os recursos gráficos dele só existem enquanto o cartão está aberto (mais alguns segundos).
 - **Processo do painel (WinUI 3):** painel, janela de configurações e primeiro uso. Abre quando você clica, se esconde quando você fecha e sai depois de alguns minutos parado. Nunca coleta nada: lê do processo da bandeja por um pipe do usuário.
 - **Por que não um processo só?** Estima-se que um processo WinUI residente custe de 30 a 60 MB; só o processo da bandeja precisa caber em cerca de 15 MB.
-- **Stack:** C# em .NET 10, Win32, Direct2D, WinUI 3 (Windows App SDK). Os builds de release estão planejados como NativeAOT para o processo da bandeja, gerados no CI.
+- **Stack:** C# em .NET 10, Win32, Direct2D, WinUI 3 (Windows App SDK). Os builds de release são NativeAOT, gerados no CI.
 
 ## 🔒 Privacidade
 
@@ -228,7 +251,7 @@ O Trayce Monitor nunca manda você desligar o firewall ou o antivírus, nem quan
 | Design | Design de interface v2.2 (ícone, cartão, painel, configurações, primeiro uso, latência) | Pronto, aprovado |
 | Prova de conceito | Ícone de bandeja, cartão, sensores e ICMP medidos numa máquina | Pronta, descartável |
 | Arquitetura | Desenho de dois processos, orçamento de coleta, empacotamento | Proposta |
-| **v1** | Tudo em [Recursos](#-recursos-planejados-para-a-v1), instalador por usuário e versão portátil, GitHub Releases, CI | Build inicial (ainda sem release) |
+| **v1** | Tudo em [Recursos](#-recursos-planejados-para-a-v1), instalador por usuário e versão portátil, GitHub Releases, CI | Build inicial (pré-releases no GitHub) |
 | Depois da v1 | Temperatura da CPU por um driver **opcional**, com um passo explícito de administrador no instalador | Ideia, design guardado |
 | Depois da v1 | Pacote no winget | Ideia |
 | Depois da v1 | Releases assinadas | Decisão em aberto |
@@ -247,6 +270,8 @@ dotnet publish src/TrayceMonitor -c Release -o out/publish   # autocontido, Read
 .\out\publish\TrayceMonitor.exe
 ```
 
+Para gerar os mesmos arquivos de uma release (zip portátil, SHA-256 e, se o [Inno Setup 6](https://jrsoftware.org/isinfo.php) estiver instalado, o instalador), rode `.\tools\build-release.ps1 -Version 0.1.0`. Ele usa NativeAOT quando o linker do MSVC está presente e ReadyToRun no caso contrário; os arquivos vão para `out\release`. As releases são geradas pelo GitHub Actions quando uma tag `v*` é enviada.
+
 - `TrayceMonitor.exe --selftest` abre o cartão e o painel sem mexer no mouse, grava o resultado em `%LOCALAPPDATA%\TrayceMonitor\trayce.log` e sai (código 0 = passou).
 - `TrayceMonitor.exe --quit` fecha a instância em execução.
 - NativeAOT está disponível com `-p:TrayceAot=true`, mas pede o linker do MSVC (Visual Studio Build Tools com a carga de trabalho de C++).
@@ -257,7 +282,7 @@ dotnet publish src/TrayceMonitor -c Release -o out/publish   # autocontido, Read
 <details>
 <summary><b>Dá para baixar?</b></summary>
 
-Ainda não. Veja o aviso no topo. Esta página vai dizer com clareza quando houver algo para baixar.
+Sim. Veja [Download](#-download): um instalador (por usuário) e um zip portátil estão na [página de Releases](https://github.com/dvd-castro/trayce-monitor/releases/latest). Eles ainda não são assinados, então o Windows SmartScreen vai avisar; a seção explica onde clicar e como conferir o SHA-256.
 </details>
 
 <details>

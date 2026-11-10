@@ -10,6 +10,7 @@
 **A featherweight system monitor that lives in your Windows 11 tray.**
 One ring in the tray. Hover for the live card. Click for the panel.
 
+[![CI](https://github.com/dvd-castro/trayce-monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/dvd-castro/trayce-monitor/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Platform: Windows 11](https://img.shields.io/badge/platform-Windows%2011-0078D4)
 ![.NET 10](https://img.shields.io/badge/.NET-10-512BD4)
@@ -21,12 +22,12 @@ English | [Português (Brasil)](README.pt-BR.md)
 
 </div>
 
-> [!WARNING]
-> **Trayce Monitor is an early build and there is nothing to download yet.**
-> What exists today: an approved UI design (every screen on this page is a *design preview*, not a screenshot of the app), a written architecture proposal, a throwaway proof of concept (PoC) whose measurements are quoted below, and an early build of v1 that you can [build from source](#%EF%B8%8F-build-from-source): ring icon, hover card, panel, tray menu and optional latency. Some items under "Features" are not in it yet, and there is no installer or release.
+> [!NOTE]
+> **Trayce Monitor is an early build.** You can [download it from Releases](#-download) (versions `0.x` are marked pre-release) or [build it from source](#%EF%B8%8F-build-from-source). Every screen on this page is a *design preview*, not a screenshot of the app, and some items under "Features" are not in the app yet.
 
 ## Contents
 
+[Download](#-download) ·
 [What it is](#-what-it-is) ·
 [Previews](#%EF%B8%8F-previews) ·
 [Features](#-features-planned-for-v1) ·
@@ -38,6 +39,28 @@ English | [Português (Brasil)](README.pt-BR.md)
 [FAQ](#-faq) ·
 [Contributing](#-contributing) ·
 [License](#-license)
+
+## 📥 Download
+
+Get the latest version from the **[Releases page](https://github.com/dvd-castro/trayce-monitor/releases/latest)**. Requirements: **Windows 11, 64-bit (x64)**. No administrator rights and no separate .NET install are needed.
+
+| File | What it is |
+|---|---|
+| `TrayceMonitor-<version>-win-x64-setup.exe` | **Installer, per user.** Installs to `%LOCALAPPDATA%\Programs\Trayce Monitor` without administrator rights, adds a Start menu shortcut and an uninstaller (Settings > Apps). "Start with Windows" is offered and **off** by default. |
+| `TrayceMonitor-<version>-win-x64-portable.zip` | **Portable.** Extract anywhere and run `TrayceMonitor.exe`. Nothing is installed; delete the folder to remove it. |
+| `SHA256SUMS.txt` | SHA-256 of the two files above, to check your download. |
+
+### Windows SmartScreen warning
+
+The binaries are **not code-signed yet**, and new files from a publisher Windows does not know get a reputation warning. When you run the installer or the exe you will probably see **"Windows protected your PC"**: click **More info**, then **Run anyway**. That is expected for now, and it is why you should check the file first, or [build it from source](#%EF%B8%8F-build-from-source) if you prefer.
+
+To check a download, compare its SHA-256 with the line for that file in `SHA256SUMS.txt`:
+
+```powershell
+Get-FileHash .\TrayceMonitor-<version>-win-x64-setup.exe -Algorithm SHA256
+```
+
+The checksum only shows that the file was not corrupted or swapped after the release was built; it is published in the same place as the file, so it is not a substitute for a signature. Signed releases are an [open decision](#%EF%B8%8F-roadmap).
 
 ## 💡 What it is
 
@@ -154,7 +177,7 @@ The ring is drawn as a smooth vector at the exact size Windows asks for, and it 
 | **Accessible by design** | Nothing is communicated by colour alone. A text fallback names the icon for screen readers and for the default tooltip. Full keyboard path to the panel. |
 | **No administrator, no driver** | Runs and installs per user. |
 | **Settings** | Ring metric, icon palette (automatic, for dark bar, for light bar, single colour), °C or °F, which items to show, refresh interval (0.5, 1 or 2 s), start with Windows, which GPU to monitor, alerts. |
-| **Per-user installer and portable build** | Both planned for each release, with an optional once-a-day update check. |
+| **Per-user installer and portable build** | Both published with each release on [GitHub Releases](https://github.com/dvd-castro/trayce-monitor/releases/latest). The optional once-a-day update check is still planned. |
 
 **Not in v1, on purpose:** CPU temperature. Reading it needs a kernel-mode sensor driver and administrator rights, so it is parked on the [roadmap](#%EF%B8%8F-roadmap).
 
@@ -208,7 +231,7 @@ flowchart LR
 - **Tray process (Win32, C#):** the notification icon, the hover card, the sampler and the settings. The card is plain Win32 plus Direct2D and DirectWrite, with no XAML, so memory stays low. Its graphics resources exist only while the card is open (plus a few seconds).
 - **Panel process (WinUI 3):** panel, settings window and first-run flow. It starts when you click, hides when you close it and exits after a few idle minutes. It never samples anything; it reads from the tray process over a per-user pipe.
 - **Why not one process?** A resident WinUI process is estimated to cost 30 to 60 MB; the tray process alone has to fit in about 15 MB.
-- **Stack:** C# on .NET 10, Win32, Direct2D, WinUI 3 (Windows App SDK). Release builds are planned as NativeAOT for the tray process, built in CI.
+- **Stack:** C# on .NET 10, Win32, Direct2D, WinUI 3 (Windows App SDK). Release builds are NativeAOT, built in CI.
 
 ## 🔒 Privacy
 
@@ -228,7 +251,7 @@ Trayce Monitor never tells you to disable your firewall or antivirus, not even w
 | Design | UI design v2.2 (icon, card, panel, settings, first run, latency) | Done, approved |
 | Proof of concept | Tray icon, hover card, sensors and ICMP measured on one machine | Done, throwaway |
 | Architecture | Two-process design, sampling budget, packaging | Proposed |
-| **v1** | Everything in [Features](#-features-planned-for-v1), per-user installer and portable build, GitHub Releases, CI | Early build (no release yet) |
+| **v1** | Everything in [Features](#-features-planned-for-v1), per-user installer and portable build, GitHub Releases, CI | Early build (pre-releases on GitHub) |
 | After v1 | CPU temperature through an **optional** driver, with an explicit administrator step in the installer | Idea, design kept on file |
 | After v1 | winget package | Idea |
 | After v1 | Signed releases | Open decision |
@@ -247,6 +270,8 @@ dotnet publish src/TrayceMonitor -c Release -o out/publish   # self-contained, R
 .\out\publish\TrayceMonitor.exe
 ```
 
+To produce the same files as a release (portable zip, SHA-256 and, if [Inno Setup 6](https://jrsoftware.org/isinfo.php) is installed, the installer) run `.\tools\build-release.ps1 -Version 0.1.0`. It uses NativeAOT when the MSVC linker is present and ReadyToRun otherwise; the files land in `out\release`. Releases are built by GitHub Actions when a `v*` tag is pushed.
+
 - `TrayceMonitor.exe --selftest` opens the card and the panel without touching the mouse, writes the result to `%LOCALAPPDATA%\TrayceMonitor\trayce.log` and exits (exit code 0 = passed).
 - `TrayceMonitor.exe --quit` closes the running instance.
 - NativeAOT is available with `-p:TrayceAot=true`, but it needs the MSVC linker (Visual Studio Build Tools with the C++ workload).
@@ -257,7 +282,7 @@ dotnet publish src/TrayceMonitor -c Release -o out/publish   # self-contained, R
 <details>
 <summary><b>Can I download it?</b></summary>
 
-Not yet. See the status box at the top. This page will say so plainly when there is something to download.
+Yes. See [Download](#-download): an installer (per user) and a portable zip are on the [Releases page](https://github.com/dvd-castro/trayce-monitor/releases/latest). They are not code-signed yet, so Windows SmartScreen will warn you; that section explains what to click and how to check the SHA-256.
 </details>
 
 <details>
