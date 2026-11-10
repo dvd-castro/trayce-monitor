@@ -13,7 +13,7 @@ Um anel na bandeja. Passe o mouse para ver o cartão ao vivo. Clique para abrir 
 [![Licença: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Plataforma: Windows 11](https://img.shields.io/badge/platform-Windows%2011-0078D4)
 ![.NET 10](https://img.shields.io/badge/.NET-10-512BD4)
-![Status: pré-alfa](https://img.shields.io/badge/status-pr%C3%A9--alfa-orange)
+![Status: build inicial](https://img.shields.io/badge/status-build%20inicial-orange)
 
 [English](README.md) | Português (Brasil)
 
@@ -22,8 +22,8 @@ Um anel na bandeja. Passe o mouse para ver o cartão ao vivo. Clique para abrir 
 </div>
 
 > [!WARNING]
-> **O Trayce Monitor está em pré-alfa e ainda não há nada para baixar.**
-> O que existe hoje: um design de interface aprovado (cada tela desta página é uma *prévia de design*, não uma captura de um aplicativo rodando), uma proposta de arquitetura escrita e uma prova de conceito descartável (PoC) cujas medições estão citadas abaixo. O aplicativo em si ainda não foi construído. Tudo em "Recursos" descreve o que a v1 foi desenhada para fazer.
+> **O Trayce Monitor está em build inicial e ainda não há nada para baixar.**
+> O que existe hoje: um design de interface aprovado (cada tela desta página é uma *prévia de design*, não uma captura do aplicativo), uma proposta de arquitetura escrita, uma prova de conceito descartável (PoC) cujas medições estão citadas abaixo e um build inicial da v1 que você pode [compilar a partir do código](#%EF%B8%8F-compilar-a-partir-do-código): ícone em anel, cartão, painel, menu da bandeja e latência opcional. Alguns itens de "Recursos" ainda não estão nele, e não há instalador nem release.
 
 ## Conteúdo
 
@@ -228,7 +228,7 @@ O Trayce Monitor nunca manda você desligar o firewall ou o antivírus, nem quan
 | Design | Design de interface v2.2 (ícone, cartão, painel, configurações, primeiro uso, latência) | Pronto, aprovado |
 | Prova de conceito | Ícone de bandeja, cartão, sensores e ICMP medidos numa máquina | Pronta, descartável |
 | Arquitetura | Desenho de dois processos, orçamento de coleta, empacotamento | Proposta |
-| **v1** | Tudo em [Recursos](#-recursos-planejados-para-a-v1), instalador por usuário e versão portátil, GitHub Releases, CI | Não iniciada |
+| **v1** | Tudo em [Recursos](#-recursos-planejados-para-a-v1), instalador por usuário e versão portátil, GitHub Releases, CI | Build inicial (ainda sem release) |
 | Depois da v1 | Temperatura da CPU por um driver **opcional**, com um passo explícito de administrador no instalador | Ideia, design guardado |
 | Depois da v1 | Pacote no winget | Ideia |
 | Depois da v1 | Releases assinadas | Decisão em aberto |
@@ -236,11 +236,21 @@ O Trayce Monitor nunca manda você desligar o firewall ou o antivírus, nem quan
 
 ## 🛠️ Compilar a partir do código
 
-**Em breve.** Ainda não há código do aplicativo neste repositório, então não há o que compilar. Quando houver, o plano é:
+Você precisa do Windows 11 e do [SDK do .NET 10](https://dotnet.microsoft.com/download/dotnet/10.0). Mais nada.
 
-- Windows 11 e o SDK do .NET 10, sem mais nada para instalar.
-- Um script único que compila localmente e no CI (o build de release no CI usa NativeAOT).
-- Testes automatizados e um portão de memória e CPU que precisa passar antes de cada release.
+```powershell
+git clone https://github.com/dvd-castro/trayce-monitor.git
+cd trayce-monitor
+dotnet build TrayceMonitor.slnx -warnaserror      # app + testes de unidade
+dotnet test TrayceMonitor.slnx                    # testes de unidade do núcleo
+dotnet publish src/TrayceMonitor -c Release -o out/publish   # autocontido, ReadyToRun + trimming
+.\out\publish\TrayceMonitor.exe
+```
+
+- `TrayceMonitor.exe --selftest` abre o cartão e o painel sem mexer no mouse, grava o resultado em `%LOCALAPPDATA%\TrayceMonitor\trayce.log` e sai (código 0 = passou).
+- `TrayceMonitor.exe --quit` fecha a instância em execução.
+- NativeAOT está disponível com `-p:TrayceAot=true`, mas pede o linker do MSVC (Visual Studio Build Tools com a carga de trabalho de C++).
+- A configuração fica em `%LOCALAPPDATA%\TrayceMonitor\settings.json`.
 
 ## ❓ Perguntas frequentes
 
@@ -288,7 +298,7 @@ O design foi escrito primeiro em português do Brasil. A localização para outr
 
 ## 🤝 Contribuir
 
-O repositório fica em [github.com/dvd-castro/trayce-monitor](https://github.com/dvd-castro/trayce-monitor). Ainda não há código do aplicativo, então não há fluxo de pull request aberto; as diretrizes de contribuição serão adicionadas quando houver o que compilar. As regras de base serão as prioridades do projeto: **leveza primeiro** (um recurso que custa memória ou CPU no processo sempre ligado precisa de medição), **sem direitos de administrador**, **acessível por padrão** e **status honesto** na documentação. Os commits seguem [Conventional Commits](https://www.conventionalcommits.org/pt-br/).
+O repositório fica em [github.com/dvd-castro/trayce-monitor](https://github.com/dvd-castro/trayce-monitor). O aplicativo está em build inicial e ainda não há fluxo de pull request aberto; as diretrizes de contribuição serão adicionadas antes da primeira release. As regras de base serão as prioridades do projeto: **leveza primeiro** (um recurso que custa memória ou CPU no processo sempre ligado precisa de medição), **sem direitos de administrador**, **acessível por padrão** e **status honesto** na documentação. Os commits seguem [Conventional Commits](https://www.conventionalcommits.org/pt-br/).
 
 ## 📄 Licença
 
