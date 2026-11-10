@@ -44,8 +44,9 @@ internal sealed unsafe class App : IWindow
 
     public int Run()
     {
-        var v = typeof(App).Assembly.GetName().Version;
-        if (v != null) _version = $"{v.Major}.{v.Minor}.{v.Build}";
+        // Versao vem de -p:Version= (a tag da release); o sufixo "+hash" do SourceLink e descartado.
+        string? info = System.Reflection.CustomAttributeExtensions.GetCustomAttribute<System.Reflection.AssemblyInformationalVersionAttribute>(typeof(App).Assembly)?.InformationalVersion;
+        if (!string.IsNullOrEmpty(info)) _version = info.Split('+')[0];
         _settings = Settings.Load(_settingsPath);
         bool reg = Autostart.IsEnabled();
         if (reg) Autostart.Set(true); // atualiza o caminho se o exe mudou de lugar
