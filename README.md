@@ -1,8 +1,11 @@
 <div align="center">
 
-<img src="docs/assets/hero.png" alt="Design preview: the Trayce hover card in light and dark themes, and the Trayce panel in the dark theme" width="100%">
-
-# Trayce
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/brand/svg/trayce-monitor-horizontal-fundo-escuro.svg">
+    <img alt="Trayce Monitor" src="assets/brand/svg/trayce-monitor-horizontal.svg" width="420">
+  </picture>
+</h1>
 
 **A featherweight system monitor that lives in your Windows 11 tray.**
 One ring in the tray. Hover for the live card. Click for the panel.
@@ -14,10 +17,12 @@ One ring in the tray. Hover for the live card. Click for the panel.
 
 English | [Português (Brasil)](README.pt-BR.md)
 
+<img src="docs/assets/hero.png" alt="Design preview: the Trayce Monitor hover card in light and dark themes, and the Trayce Monitor panel in the dark theme" width="100%">
+
 </div>
 
 > [!WARNING]
-> **Trayce is pre-alpha and there is nothing to download yet.**
+> **Trayce Monitor is pre-alpha and there is nothing to download yet.**
 > What exists today: an approved UI design (every screen on this page is a *design preview*, not a screenshot of a running app), a written architecture proposal, and a throwaway proof of concept (PoC) whose measurements are quoted below. The application itself has not been built. Everything under "Features" describes what v1 is designed to do.
 
 ## Contents
@@ -36,7 +41,7 @@ English | [Português (Brasil)](README.pt-BR.md)
 
 ## 💡 What it is
 
-Most system monitors want a window, a widget or a pile of tray icons. Trayce wants **one icon**:
+Most system monitors want a window, a widget or a pile of tray icons. Trayce Monitor wants **one icon**:
 
 - **A ring** in the notification area shows one metric at a glance. By default it is CPU usage; you can switch it to memory, GPU, GPU temperature, disk, network, or "worst metric".
 - **Hover** over it and, after 400 ms, a small read-only **card** shows CPU, memory, GPU, GPU temperature, disk, network and (if you turn it on) network latency, all live. It never steals focus from what you are typing.
@@ -155,7 +160,7 @@ The ring is drawn as a smooth vector at the exact size Windows asks for, and it 
 
 ## 🪶 Why it is light (measured on a proof of concept)
 
-"Light" is a design goal, so it was tested before any application code was written. A throwaway proof of concept (Win32 tray icon, vector ring, Direct2D hover card, sensor sampling, ICMP) was built and measured. **These are PoC numbers from a single machine, not results from a Trayce release.**
+"Light" is a design goal, so it was tested before any application code was written. A throwaway proof of concept (Win32 tray icon, vector ring, Direct2D hover card, sensor sampling, ICMP) was built and measured. **These are PoC numbers from a single machine, not results from a Trayce Monitor release.**
 
 | What | PoC result |
 |---|---|
@@ -173,7 +178,7 @@ What the measurements also taught, which is why the design changed:
 
 - Hardware-accelerated Direct2D used **66 to 71 MB** with the card open and took up to 9.7 s to create its resources. The card is therefore drawn with **software** rendering (about 6 MB extra, 7 to 88 ms to create).
 - Reading network counters through PDH cost up to 6.8 s in a single call and froze the UI once. Sampling moved to its own thread and the network source moves to `GetIfTable2`.
-- The Windows pointer-hover notification arrives about 5 ms after the pointer stops, so Trayce counts its own 400 ms.
+- The Windows pointer-hover notification arrives about 5 ms after the pointer stops, so Trayce Monitor counts its own 400 ms.
 
 **Not met yet, stated plainly:** idle CPU in the PoC was 1.2 to 1.3 % of one core against a v1 target of 0.5 % or less. That PoC run included a measurement probe and the machine was already busy, so it is not a clean figure, but it is above target and optimisation work is planned before v1.
 
@@ -207,14 +212,14 @@ flowchart LR
 
 ## 🔒 Privacy
 
-Trayce is designed to collect **no personal data and no telemetry**. Everything it reads stays on your PC, history exists only in memory, and nothing is written to disk except your settings file.
+Trayce Monitor is designed to collect **no personal data and no telemetry**. Everything it reads stays on your PC, history exists only in memory, and nothing is written to disk except your settings file.
 
-There are exactly two ways Trayce can talk to the network, both visible in the UI and both switchable:
+There are exactly two ways Trayce Monitor can talk to the network, both visible in the UI and both switchable:
 
-1. **Latency (opt-in, off by default).** When you turn it on, Trayce sends a small ICMP ping every 2 seconds to the address you choose (default `1.1.1.1`, operated by Cloudflare) and to your router. Whoever receives a ping can see your public IP address. The router address is detected automatically and cannot be edited, so Trayce is not a LAN scanner.
-2. **Update check (planned).** Once a day, after first run, Trayce asks the GitHub Releases API whether a newer version exists. GitHub sees your IP address and the app version. It can be turned off and nothing is downloaded without a click.
+1. **Latency (opt-in, off by default).** When you turn it on, Trayce Monitor sends a small ICMP ping every 2 seconds to the address you choose (default `1.1.1.1`, operated by Cloudflare) and to your router. Whoever receives a ping can see your public IP address. The router address is detected automatically and cannot be edited, so Trayce Monitor is not a LAN scanner.
+2. **Update check (planned).** Once a day, after first run, Trayce Monitor asks the GitHub Releases API whether a newer version exists. GitHub sees your IP address and the app version. It can be turned off and nothing is downloaded without a click.
 
-Trayce never tells you to disable your firewall or antivirus, not even when ping is blocked.
+Trayce Monitor never tells you to disable your firewall or antivirus, not even when ping is blocked.
 
 ## 🗺️ Roadmap
 
@@ -248,7 +253,7 @@ Not yet. See the status box at the top. This page will say so plainly when there
 <details>
 <summary><b>Why no CPU temperature in v1?</b></summary>
 
-Windows does not expose it to normal programs. Reading it needs a kernel-mode sensor driver and administrator rights, and Trayce v1 promises neither. GPU temperature does not need a driver, so it is in. CPU temperature stays on the roadmap as an optional, clearly explained step.
+Windows does not expose it to normal programs. Reading it needs a kernel-mode sensor driver and administrator rights, and Trayce Monitor v1 promises neither. GPU temperature does not need a driver, so it is in. CPU temperature stays on the roadmap as an optional, clearly explained step.
 </details>
 
 <details>
@@ -283,8 +288,10 @@ The design was written in Brazilian Portuguese first. Localisation has not been 
 
 ## 🤝 Contributing
 
-The repository is local for now, so there is no issue tracker or pull-request flow yet. Contribution guidelines will be added when it is published. The ground rules will be the project's priorities: **light first** (a feature that costs memory or CPU in the always-on process needs a measurement), **no administrator rights**, **accessible by default**, and **honest status** in the docs. Commits follow [Conventional Commits](https://www.conventionalcommits.org/).
+The repository lives at [github.com/dvd-castro/trayce-monitor](https://github.com/dvd-castro/trayce-monitor). There is no application code yet, so no pull-request flow is open yet; contribution guidelines will be added when there is something to build. The ground rules will be the project's priorities: **light first** (a feature that costs memory or CPU in the always-on process needs a measurement), **no administrator rights**, **accessible by default**, and **honest status** in the docs. Commits follow [Conventional Commits](https://www.conventionalcommits.org/).
 
 ## 📄 License
 
 [MIT](LICENSE) © 2026 David Castro
+
+*Trayce Monitor is not affiliated with other software named Trayce.*

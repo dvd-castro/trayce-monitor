@@ -1,8 +1,11 @@
 <div align="center">
 
-<img src="docs/assets/hero.png" alt="Prévia do design: o cartão do Trayce nos temas claro e escuro, e o painel do Trayce no tema escuro" width="100%">
-
-# Trayce
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/brand/svg/trayce-monitor-horizontal-fundo-escuro.svg">
+    <img alt="Trayce Monitor" src="assets/brand/svg/trayce-monitor-horizontal.svg" width="420">
+  </picture>
+</h1>
 
 **Um monitor de sistema levíssimo que mora na bandeja do Windows 11.**
 Um anel na bandeja. Passe o mouse para ver o cartão ao vivo. Clique para abrir o painel.
@@ -14,10 +17,12 @@ Um anel na bandeja. Passe o mouse para ver o cartão ao vivo. Clique para abrir 
 
 [English](README.md) | Português (Brasil)
 
+<img src="docs/assets/hero.png" alt="Prévia do design: o cartão do Trayce Monitor nos temas claro e escuro, e o painel do Trayce Monitor no tema escuro" width="100%">
+
 </div>
 
 > [!WARNING]
-> **O Trayce está em pré-alfa e ainda não há nada para baixar.**
+> **O Trayce Monitor está em pré-alfa e ainda não há nada para baixar.**
 > O que existe hoje: um design de interface aprovado (cada tela desta página é uma *prévia de design*, não uma captura de um aplicativo rodando), uma proposta de arquitetura escrita e uma prova de conceito descartável (PoC) cujas medições estão citadas abaixo. O aplicativo em si ainda não foi construído. Tudo em "Recursos" descreve o que a v1 foi desenhada para fazer.
 
 ## Conteúdo
@@ -36,7 +41,7 @@ Um anel na bandeja. Passe o mouse para ver o cartão ao vivo. Clique para abrir 
 
 ## 💡 O que é
 
-A maioria dos monitores de sistema quer uma janela, um widget ou um monte de ícones na bandeja. O Trayce quer **um ícone só**:
+A maioria dos monitores de sistema quer uma janela, um widget ou um monte de ícones na bandeja. O Trayce Monitor quer **um ícone só**:
 
 - **Um anel** na área de notificação mostra uma métrica num relance. Por padrão é o uso da CPU; dá para trocar por memória, GPU, temperatura da GPU, disco, rede ou "pior métrica".
 - **Passe o mouse** nele e, depois de 400 ms, um **cartão** pequeno, só de leitura, mostra CPU, memória, GPU, temperatura da GPU, disco, rede e (se você ligar) a latência da rede, tudo ao vivo. Ele nunca rouba o foco do que você está digitando.
@@ -155,7 +160,7 @@ O anel é desenhado como vetor liso, no tamanho exato que o Windows pede, e fica
 
 ## 🪶 Por que é leve (medido em uma prova de conceito)
 
-"Leve" é uma meta de design, então foi testada antes de qualquer código do aplicativo. Uma prova de conceito descartável (ícone de bandeja Win32, anel vetorial, cartão em Direct2D, coleta de sensores, ICMP) foi construída e medida. **São números de uma PoC numa única máquina, não resultados de uma release do Trayce.**
+"Leve" é uma meta de design, então foi testada antes de qualquer código do aplicativo. Uma prova de conceito descartável (ícone de bandeja Win32, anel vetorial, cartão em Direct2D, coleta de sensores, ICMP) foi construída e medida. **São números de uma PoC numa única máquina, não resultados de uma release do Trayce Monitor.**
 
 | O quê | Resultado da PoC |
 |---|---|
@@ -173,7 +178,7 @@ O que as medições também ensinaram, e por isso o design mudou:
 
 - O Direct2D acelerado por hardware usou **66 a 71 MB** com o cartão aberto e levou até 9,7 s para criar seus recursos. Por isso o cartão é desenhado em **software** (cerca de 6 MB a mais, 7 a 88 ms para criar).
 - Ler os contadores de rede pelo PDH custou até 6,8 s numa única chamada e travou a interface uma vez. A coleta foi para uma thread própria e a fonte de rede passa a ser `GetIfTable2`.
-- O aviso de "ponteiro pousou" do Windows chega cerca de 5 ms depois de o ponteiro parar, então o Trayce conta os próprios 400 ms.
+- O aviso de "ponteiro pousou" do Windows chega cerca de 5 ms depois de o ponteiro parar, então o Trayce Monitor conta os próprios 400 ms.
 
 **Ainda não atingido, dito às claras:** a CPU em repouso na PoC ficou em 1,2 a 1,3 % de um núcleo, contra uma meta de 0,5 % ou menos para a v1. Essa execução incluía uma sonda de medição e a máquina já estava ocupada, então não é um número limpo, mas está acima da meta e há trabalho de otimização planejado antes da v1.
 
@@ -207,14 +212,14 @@ flowchart LR
 
 ## 🔒 Privacidade
 
-O Trayce foi desenhado para **não coletar dados pessoais nem telemetria**. Tudo o que ele lê fica no seu PC, o histórico existe só na memória e nada é gravado em disco além do arquivo de configurações.
+O Trayce Monitor foi desenhado para **não coletar dados pessoais nem telemetria**. Tudo o que ele lê fica no seu PC, o histórico existe só na memória e nada é gravado em disco além do arquivo de configurações.
 
-Há exatamente duas formas de o Trayce falar com a rede, ambas visíveis na interface e ambas desligáveis:
+Há exatamente duas formas de o Trayce Monitor falar com a rede, ambas visíveis na interface e ambas desligáveis:
 
-1. **Latência (opcional, desligada por padrão).** Quando você a liga, o Trayce envia um ping ICMP pequeno a cada 2 segundos para o endereço que você escolher (padrão `1.1.1.1`, operado pela Cloudflare) e para o seu roteador. Quem recebe o ping vê o seu endereço IP público. O endereço do roteador é detectado sozinho e não se edita, então o Trayce não é um scanner de rede local.
-2. **Checagem de atualização (planejada).** Uma vez por dia, depois do primeiro uso, o Trayce pergunta à API de Releases do GitHub se há versão nova. O GitHub vê o seu IP e a versão do aplicativo. Dá para desligar e nada é baixado sem um clique.
+1. **Latência (opcional, desligada por padrão).** Quando você a liga, o Trayce Monitor envia um ping ICMP pequeno a cada 2 segundos para o endereço que você escolher (padrão `1.1.1.1`, operado pela Cloudflare) e para o seu roteador. Quem recebe o ping vê o seu endereço IP público. O endereço do roteador é detectado sozinho e não se edita, então o Trayce Monitor não é um scanner de rede local.
+2. **Checagem de atualização (planejada).** Uma vez por dia, depois do primeiro uso, o Trayce Monitor pergunta à API de Releases do GitHub se há versão nova. O GitHub vê o seu IP e a versão do aplicativo. Dá para desligar e nada é baixado sem um clique.
 
-O Trayce nunca manda você desligar o firewall ou o antivírus, nem quando o ping é bloqueado.
+O Trayce Monitor nunca manda você desligar o firewall ou o antivírus, nem quando o ping é bloqueado.
 
 ## 🗺️ Roteiro
 
@@ -248,7 +253,7 @@ Ainda não. Veja o aviso no topo. Esta página vai dizer com clareza quando houv
 <details>
 <summary><b>Por que não há temperatura da CPU na v1?</b></summary>
 
-O Windows não a expõe para programas comuns. Lê-la exige um driver de sensores em modo kernel e direitos de administrador, e a v1 do Trayce não promete nenhum dos dois. A temperatura da GPU não precisa de driver, então ela entra. A temperatura da CPU fica no roteiro como um passo opcional e bem explicado.
+O Windows não a expõe para programas comuns. Lê-la exige um driver de sensores em modo kernel e direitos de administrador, e a v1 do Trayce Monitor não promete nenhum dos dois. A temperatura da GPU não precisa de driver, então ela entra. A temperatura da CPU fica no roteiro como um passo opcional e bem explicado.
 </details>
 
 <details>
@@ -283,8 +288,10 @@ O design foi escrito primeiro em português do Brasil. A localização para outr
 
 ## 🤝 Contribuir
 
-O repositório é local por enquanto, então ainda não há issues nem fluxo de pull request. As diretrizes de contribuição serão adicionadas quando ele for publicado. As regras de base serão as prioridades do projeto: **leveza primeiro** (um recurso que custa memória ou CPU no processo sempre ligado precisa de medição), **sem direitos de administrador**, **acessível por padrão** e **status honesto** na documentação. Os commits seguem [Conventional Commits](https://www.conventionalcommits.org/pt-br/).
+O repositório fica em [github.com/dvd-castro/trayce-monitor](https://github.com/dvd-castro/trayce-monitor). Ainda não há código do aplicativo, então não há fluxo de pull request aberto; as diretrizes de contribuição serão adicionadas quando houver o que compilar. As regras de base serão as prioridades do projeto: **leveza primeiro** (um recurso que custa memória ou CPU no processo sempre ligado precisa de medição), **sem direitos de administrador**, **acessível por padrão** e **status honesto** na documentação. Os commits seguem [Conventional Commits](https://www.conventionalcommits.org/pt-br/).
 
 ## 📄 Licença
 
 [MIT](LICENSE) © 2026 David Castro
+
+*O Trayce Monitor não tem relação com outros softwares chamados Trayce.*
