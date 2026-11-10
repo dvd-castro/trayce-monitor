@@ -442,6 +442,7 @@ internal sealed unsafe class App : IWindow
                 Check(!_panel.IsOpen, "painel fechado");
                 break;
             case 4:
+                if (_model.LatencyOn) Log.Line($"autoteste: latencia 1.1.1.1 {Format.Latency(_model.InternetMs)}, gateway {Format.Latency(_model.GatewayMs)}");
                 Log.Line($"autoteste: fim, {SelfTestFailures} falha(s)");
                 Native.PostMessage(_hwnd, Native.WM_CLOSE, 0, 0);
                 break;
