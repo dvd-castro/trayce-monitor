@@ -7,6 +7,7 @@
     <RootNamespace>TrayceMonitor</RootNamespace>
     <AssemblyName>TrayceMonitor</AssemblyName>
     <Version>1.0.0</Version>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <Product>Trayce Monitor</Product>
     <Description>Monitor de sistema leve para a bandeja do Windows 11</Description>
     <Copyright>MIT License</Copyright>
